@@ -14,7 +14,7 @@ DCL:数据控制语言。用于定义数据库、表、字段、用户的访问�
 SQL可以写在一行或多行。
 每条命令以‘;’或‘\g’或‘\G’结束
 关键字不能被缩写也不能分行
-列的别名尽量使用双引号"",而且不建议省略as
+列的别名尽量使用双引号"",而且不建议省略as(alias)
 字符串型和日期时间类型的数据可以使用单引号''表示
 
 注释：1、#	2、--(后面有空格)	3、/*  */
@@ -34,8 +34,14 @@ VALUES(2003,'张三');
 SHOW CREATE TABLE employees;
 
 INSERT INTO test_3_practices
+VALUES (7,'Jaker',50000),(8,'peter',8000);
+
+INSERT INTO test_3_practices
 VALUES(01,'曾超',15000),(02,'张三',14000),
 (02,'李四',13000),(03,'王五',9000),(04,'老刘',5000);
+
+DELETE FROM test_3_practices
+WHERE job_id=5;
 
 SHOW CREATE TABLE test_3_practices;
 SELECT * FROM test_3_practices;
@@ -157,77 +163,182 @@ SELECT 1=NULL FROM DUAL;#如果两边中有一个是null，结果为null
 
 # <=> 安全等于运算符  安全地判断两个值、字符串或表达式是否相等 
 #select c from table where a<=>b;
-
+SELECT 1<=>2,1 !=2,1<=>'1',1!='1',1<=>'a',0<=>'a' 
+FROM DUAL;
+SELECT 1<=>NULL,NULL<=>NULL 
+FROM DUAL;
 # <>(!=) 不等于运算符 判断两值、字符串或表达式是否不相等 select c from table 
 #							where a<>b;或(a!=b)
-
+SELECT 1<>2
+FROM DUAL;
 #< 小于符号 >大于符号 <=小于等于 >=大于等于
+
+
+
 
 #-----非符号类型运算符
 
+
 #IS NULL 为空运算符 判断值、字符串或表达式是否为空
 #		select b from table where a is null;
-
 #ISNULL  为空运算符 判断一个值、字符串或表达式是否为空
 #		select b from table where a is null;
-
 #IS NOT NULL 不为空运算符 判断一个值、字符串或表达式是否不为空
 #		select b from table where a is not null;
+SELECT DISTINCT job_id,per_name
+FROM test_3_practices;
+
+SELECT job_id,mon_salary,per_name
+FROM test_3_practices
+WHERE job_id IS NOT NULL;
+
 
 #LEAST(least) 最小值运算符 在多个值中返回最小值
 #		select d from table where c least(a,b);
-
 #GREATEST(greatest)最大值运算符 在多个值中返回最大值
 #		select d from table where c greatest(a,b);
 
-#BETWEEN AND(between and) 判断一个值是否在两值之间
-#		select d from table where c between a and b;
+SELECT LEAST('c','a','f','j','a'),GREATEST('g','j','k')
+FROM DUAL;
+
+SELECT LEAST(job_id,mon_salary)
+FROM test_3_practices;
+
+
+#BETWEEN AND(between and) 判断一个值是否在两值之间,包含边界
+#select d from table where c between a(下界) and b(上界);
+
+SELECT mon_salary,per_name,job_id
+FROM test_3_practices
+WHERE mon_salary BETWEEN 6000 AND 50000;
+
+SELECT mon_salary,per_name,job_id
+FROM test_3_practices
+WHERE mon_salary NOT BETWEEN 6000 AND 50000;#不在范围内，加个not
+
+/*SELECT mon_salary,per_name,job_id
+FROM test_3_practices
+WHERE mon_salary BETWEEN 50000 AND 6000;*/ #上界下界位置不能变
+
+SELECT mon_salary,per_name,job_id
+FROM test_3_practices
+WHERE mon_salary >=6000 && mon_salary <=50000;
 
 #IN 属于运算符 判断一个值是否为列表中的任意一个值
-#		select d from table where c in(a,b);
-
+#	(in(set)) 	select d from table where c in(a,b);
 #NOT IN 不属于运算符 判断一个值是否不是列表中的任意一个值
-#		select d from table where c not in(a,b);
+#	(not in(set))select d from table where c not in(a,b);
+#in\not in 离散的值
+SELECT job_id,per_name
+FROM test_3_practices
+WHERE job_id IN(2,3);
+
+SELECT job_id,per_name
+FROM test_3_practices
+WHERE job_id =2 OR job_id =3;
+
+#查询mon_salary不是12000,15000,50000的员工
+SELECT job_id,per_name,mon_salary
+FROM test_3_practices
+WHERE mon_salary NOT IN(12000,15000,50000);
 
 #LIKE 模糊匹配运算符 判断一个值是否符合模糊匹配规则 
 #		select c from table where a like b;
+#查询员工姓名per_name中包含'a'的员工信息
+SELECT job_id,per_name,mon_salary
+FROM test_3_practices
+WHERE per_name LIKE '%a%';#%代表不确定个数的字符，包括0个
 
+##查询员工姓名per_name中包含'a'的员工信息，且包含'e';
+SELECT job_id,per_name,mon_salary
+FROM test_3_practices
+WHERE per_name LIKE '%a%' AND per_name LIKE 'e';
+
+SELECT job_id,per_name,mon_salary
+FROM test_3_practices
+WHERE per_name LIKE '%a%e%' OR per_name LIKE '%e%a%' ;
+#查询第二个字符是'a'的员工信息
+SELECT job_id,per_name,mon_salary
+FROM test_3_practices
+WHERE per_name LIKE '_a%';
+
+#查询第二个字符是下划线'_',第三个字符是'a'的员工信息
+SELECT job_id,per_name,mon_salary
+FROM test_3_practices
+WHERE per_name LIKE '_\_a%';#转义符
+
+SELECT job_id,per_name,mon_salary
+FROM test_3_practices
+WHERE per_name LIKE '_$_a%' ESCAPE '$';#令$转义符
 #REGEXP(regexp) 正则表达式运算符 判断一个值是否符合正则表达式规则
-#		select c from table where a regexp b;
-
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-
+#（语法:expr regexp 匹配条件）   select c from table where a regexp b;
+####
+#'^'匹配以该字符后面的字符开头的字符串
+#'$'匹配以该字符前面的字符结尾的字符串
+#'.'匹配任何一个字符
+#"[...]"匹配在方括号内的任意字符。例如"[abc]"匹配a,b,或c,可使用'-',如”[a-z]“
+#		匹配任意一个字母，"[0-9]"匹配任意一个数字
+#'*'匹配零个或多个在它前面的字符。如：”x*“匹配任何数量的'x'字符
+#	"[0-9]*"匹配任何数量的数字，而"*"匹配任何数量的任何字符
+#RLIKE 正则表达式运算符 判断一个值是否符合正则表达式的规则 
+#		select c from table where a rlike b;
 
 
+#********************逻辑运算符**************************#
+#NOT或！ 逻辑非 SELECT NOT A
+SELECT NOT 1,NOT 0,NOT (1+1),!1,NOT ! 1,NOT NULL;
+#AND或&&  逻辑与 SELECT A AND B 或 SELECT A && B
+SELECT 1 AND 0, 1 AND 1,0 && 0, NULL AND NULL;
+#OR或||  逻辑或  SELECT A OR B或 SELECT A || B
+SELECT 1 OR 0, 1 OR 1,0 || 0, NULL || NULL,NULL || 1,NULL || 0;
+#XOR  逻辑异或 SELECT A XOR B
+SELECT 1 XOR 0,0 XOR 0,NULL XOR 1,0 XOR 1,NULL XOR 0;
+
+#********************位运算******************************#
+#  &  按位与(位AND) SELECT A & B;
+#  |  按位或(位OR)  SELECT A | B; 
+#  ^  按位与(位XOR) SELECT A ^ B;
+#  ~  按位取反      SELECT ~A;
+#  >>  按位右移     SELECT A>>2;
+#  <<  按位左移     SELECT A<<2;
+
+SELECT 12 & 5, 12 | 5, 12 ^ 5 FROM DUAL;
+SELECT 10  &   ~1;
+
+#在一定范围内满足:每向左移一位，相当于乘以2; 每向右移一位，相当于除2
+SELECT 4 << 1, 8 >> 1;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#************************************************#
+#***********************练习*********************#
+#1、选择工资不在8000~12000的员工的名字和工资
+SELECT per_name `name`,mon_salary salary
+FROM test_3_practices
+WHERE mon_salary NOT BETWEEN 8000 AND 12000;
+#2、选择id为3或5的员工的姓名及工资
+SELECT per_name `name`,mon_salary salary
+FROM test_3_practices
+WHERE job_id IN(3,5);
+#3、选择没有job_id的员工的姓名及工资
+SELECT per_name `name`,mon_salary salary
+FROM test_3_practices
+WHERE job_id IS NULL;
+#4、选择姓名中有字母a和k的员工姓名
+SELECT per_name `name`
+FROM test_3_practices
+WHERE per_name LIKE '%a%k%' OR per_name LIKE '%k%a%' ;
+#5、选择姓名中第3个字母是a的员工姓名
+SELECT per_name `name`
+FROM test_3_practices
+WHERE per_name LIKE '%__a%';
+#6、显示表test_3_practice中名字以“三”结尾的员工信息
+SELECT job_id id,per_name `name`,mon_salary salary
+FROM test_3_practices
+WHERE per_name REGEXP '三$' ;
+#6、显示表test_3_practice中名字以“曾”开头的员工信息
+SELECT job_id id,per_name `name`,mon_salary salary
+FROM test_3_practices
+WHERE per_name REGEXP '^曾' ;
 
 
 
