@@ -60,7 +60,7 @@ LIMIT 4,2;#第三页
 
 #NOTICE_1:   WHERE...ORDER BY ...LIMIT声明顺序
 #practice_3:按salary降序显示salary>8000的员工信息，
-#采用分页方式显示每页两条记录,显示第二页
+#采用分页方式显示，每页两条记录,显示第二页
 SELECT * FROM test_2
 WHERE salary > 8000
 ORDER BY salary DESC
@@ -76,7 +76,7 @@ LIMIT 5;
 #表里有6条数据，只显示第3、4条数据
 SELECT employee_id,last_name
 FROM test_2
-LIMIT 2,2;#获取从第2条记录开始后面的2条记录
+LIMIT 2,2;#获取从第3条记录开始后面的2条记录
 
 #MySQL 8.0中可以使用“LIMT 3 OFFSET 4”表示获取从第5条记录开始后面的3条记录
 #和LIMIT 4,3;返回的结果相同
