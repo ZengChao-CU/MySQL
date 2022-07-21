@@ -82,7 +82,7 @@ LIMIT 2,2;#获取从第3条记录开始后面的2条记录
 #和LIMIT 4,3;返回的结果相同
 SELECT employee_id,last_name
 FROM test_2
-LIMIT 2 OFFSET 2;#获取从第2条记录开始后面的2条记录 offset 后面是偏移量,
+LIMIT 2 OFFSET 2;#获取从第3条记录开始后面的2条记录 offset 后面是偏移量,
 #与不用offset位置相反
 #practice_4:查询员工表中工资最高的员工信息
 SELECT * FROM test_2
@@ -93,8 +93,18 @@ LIMIT 0,1;#limit 1;
 #中使用关键字LIMIT,而且需要放在SELECYT语句的最后面
 #LIMIT关键字不能使用在SQL Server、DB2、Oracle
 
-
-
-
-
+#practice_4:查询员工的姓名、部门号和年薪，按年薪降序，姓名升序显示
+SELECT last_name,job_id,salary * 12 annual_sal
+FROM test_2
+ORDER BY annual_sal DESC,last_name ASC;
+#practice_5:选择工资在9000到24000的员工的姓名和工资，按工资降序，显示3到4位置的数据
+SELECT last_name,salary
+FROM test_2
+WHERE 9000 <= salary <= 24000#salary >= 9000 and salary <= 24000
+ORDER BY salary DESC
+LIMIT 2,2;
+#practice_6:查询邮箱中包含A的员工信息，并先按邮箱的字节数降序，再按部门号升序
+SELECT * FROM test_2
+WHERE email LIKE '%A%'  #WHERE email REGXP '[A]'
+ORDER BY LENGTH(email) DESC, job_id ASC;
 

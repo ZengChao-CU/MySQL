@@ -339,14 +339,3 @@ WHERE per_name REGEXP '三$' ;
 SELECT job_id id,per_name `name`,mon_salary salary
 FROM test_3_practices
 WHERE per_name REGEXP '^曾' ;
-
-
-
-
-
-
-
-
-
-
-
